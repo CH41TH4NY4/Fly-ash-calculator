@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fly Ash Road Estimator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .output {
+      margin-top: 20px;
+      background: #e0f7fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Fly Ash to Road Estimator</h2>
+    <label for="flyash">Enter Fly Ash Amount (in tons):</label>
+    <input type="number" id="flyash" placeholder="e.g. 1000" />
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="results" class="output" style="display:none"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const flyash = parseFloat(document.getElementById("flyash").value);
+      if (isNaN(flyash) || flyash <= 0) {
+        alert("Please enter a valid amount of fly ash.");
+        return;
+      }
+
+      // Assumed values
+      const flyashPerKm = 150; // tons needed for 1 km of 7m wide highway
+      const roadLength = flyash / flyashPerKm; // in km
+
+      // Material ratios (for 1 ton of fly ash)
+      const cementPerTon = 0.33; // 33% of fly ash weight
+      const waterPerTon = 0.18;  // 18% of fly ash weight
+      const aggregatePerTon = 1.0; // roughly equal in weight to fly ash
+
+      const totalCement = cementPerTon * flyash;
+      const totalWater = waterPerTon * flyash;
+      const totalAggregates = aggregatePerTon * flyash;
+
+      const resultDiv = document.getElementById("results");
+      resultDiv.innerHTML = `
+        <strong>Estimated Road Length:</strong> ${roadLength.toFixed(2)} km<br/><br/>
+        <strong>Materials Needed:</strong><br/>
+        - Cement: ${totalCement.toFixed(2)} tons<br/>
+        - Water: ${totalWater.toFixed(2)} tons<br/>
+        - Aggregates/Soil: ${totalAggregates.toFixed(2)} tons
+      `;
+      resultDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>
