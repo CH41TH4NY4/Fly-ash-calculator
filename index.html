@@ -2,60 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fly Ash Road Estimator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     body {
-      margin: 0;
       font-family: 'Inter', sans-serif;
       background: #f0f2f5;
-      color: #333;
+      margin: 0;
+      padding: 30px 20px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
+      justify-content: center;
     }
 
     .container {
-      background: white;
-      max-width: 500px;
-      width: 100%;
-      padding: 30px;
+      background: #fff;
+      padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
     }
 
     h1 {
       text-align: center;
       color: #007bff;
+      margin-bottom: 24px;
     }
 
     label {
-      font-weight: 600;
       display: block;
       margin-bottom: 8px;
+      font-weight: 600;
     }
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
+      margin-bottom: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      margin-bottom: 20px;
       font-size: 1rem;
     }
 
     button {
       width: 100%;
+      padding: 12px;
       background: #007bff;
       color: white;
-      padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
     button:hover {
@@ -64,22 +62,31 @@
 
     .output {
       margin-top: 20px;
-      background: #e8f0fe;
       padding: 20px;
+      background: #e9f5ff;
       border-radius: 10px;
-      font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Fly Ash Road Estimator</h1>
-    <label for="flyash">Enter Fly Ash Amount (in tons):</label>
+
+    <label for="flyash">Fly Ash Amount (tons):</label>
     <input type="number" id="flyash" placeholder="e.g. 1000" />
+
+    <label for="cementPrice">Cement Price (per ton) [Default: ₹7000]:</label>
+    <input type="number" id="cementPrice" placeholder="Optional" />
+
+    <label for="waterPrice">Water Price (per ton) [Default: ₹20]:</label>
+    <input type="number" id="waterPrice" placeholder="Optional" />
+
+    <label for="soilPrice">Soil/Aggregate Price (per ton) [Default: ₹500]:</label>
+    <input type="number" id="soilPrice" placeholder="Optional" />
 
     <button onclick="calculate()">Calculate</button>
 
-    <div id="results" class="output" style="display:none;"></div>
+    <div id="results" class="output" style="display: none;"></div>
   </div>
 
   <script>
@@ -97,20 +104,39 @@
       const waterPerTon = 0.18;
       const aggregatePerTon = 1.0;
 
-      const totalCement = cementPerTon * flyash;
-      const totalWater = waterPerTon * flyash;
-      const totalAggregates = aggregatePerTon * flyash;
+      const cement = cementPerTon * flyash;
+      const water = waterPerTon * flyash;
+      const aggregates = aggregatePerTon * flyash;
 
-      const results = `
+      // Default prices
+      const defaultCementPrice = 7000; // per ton
+      const defaultWaterPrice = 20;
+      const defaultSoilPrice = 500;
+
+      const cementPrice = parseFloat(document.getElementById("cementPrice").value) || defaultCementPrice;
+      const waterPrice = parseFloat(document.getElementById("waterPrice").value) || defaultWaterPrice;
+      const soilPrice = parseFloat(document.getElementById("soilPrice").value) || defaultSoilPrice;
+
+      const cementCost = cement * cementPrice;
+      const waterCost = water * waterPrice;
+      const soilCost = aggregates * soilPrice;
+      const totalCost = cementCost + waterCost + soilCost;
+
+      const resultsHTML = `
         <strong>Estimated Road Length:</strong> ${roadLength.toFixed(2)} km<br><br>
         <strong>Materials Needed:</strong><br>
-        Cement: ${totalCement.toFixed(2)} tons<br>
-        Water: ${totalWater.toFixed(2)} tons<br>
-        Aggregates/Soil: ${totalAggregates.toFixed(2)} tons
+        Cement: ${cement.toFixed(2)} tons<br>
+        Water: ${water.toFixed(2)} tons<br>
+        Soil/Aggregates: ${aggregates.toFixed(2)} tons<br><br>
+        <strong>Cost Estimation:</strong><br>
+        Cement Cost: ₹${cementCost.toLocaleString()}<br>
+        Water Cost: ₹${waterCost.toLocaleString()}<br>
+        Soil/Aggregate Cost: ₹${soilCost.toLocaleString()}<br><br>
+        <strong>Total Estimated Cost: ₹${totalCost.toLocaleString()}</strong>
       `;
 
       const resultDiv = document.getElementById("results");
-      resultDiv.innerHTML = results;
+      resultDiv.innerHTML = resultsHTML;
       resultDiv.style.display = "block";
     }
   </script>
